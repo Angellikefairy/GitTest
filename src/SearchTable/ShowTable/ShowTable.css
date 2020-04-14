@@ -1,0 +1,13 @@
+.ant-table-thead > tr > th {
+    background-color: #f5faf9 !important;
+}
+
+.actionLink::after {
+    content: '|';
+    margin: 0 8px;
+    color: #e5e9ef;
+}
+
+.ant-pagination {
+    margin-top: 37px !important;
+}
