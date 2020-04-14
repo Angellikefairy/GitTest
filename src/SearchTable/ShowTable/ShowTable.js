@@ -1,5 +1,7 @@
 import React , {Component} from "react";
 import { Table, Badge } from 'antd';
+import eventBus from "../../EventBus";
+import data from "../../Data";
 import "./ShowTable.css";
 
 const columns = [
@@ -45,7 +47,9 @@ const columns = [
     title: '时间',
     key: 'time',
     dataIndex: 'time',
-    sorter: (a,b) => Number(new Date(a) - new Date(b))
+    sorter: (a,b) => {
+        return new Date(a.time).getTime() - new Date(b.time).getTime()
+    }
   },
   {
     title: '状态',
@@ -79,34 +83,6 @@ const columns = [
   },
 ];
 
-const data = [];
-for(let i=1;i<11;i++) {
-    let status;
-    let time;
-    let mounth='2020-04';
-    if(i%3 === 1) {
-        status = '成功'
-    }
-    else if(i%3 === 2) {
-        status = '进行中'
-    }
-    else status = '失败';
-    if(i<10) {
-        time = mounth+`-0${i}`
-    }
-    else {
-        time = mounth+`-${i}`
-    }
-    data.push({
-        key: `${i}`,
-        name: `文件夹${i}`,
-        content: `这是一段内容${i}`,
-        summary: `这是一段很长的简介，这是一段很长的简介${i}`,
-        time,
-        status
-    })
-}
-
 const paginationProps = {
     showSizeChanger: false,
     defaultCurrent: 1,
@@ -115,14 +91,37 @@ const paginationProps = {
     showQuickJumper: true
 }
 
-const ShowTable = () => (
-    <Table 
-        columns={columns} 
-        dataSource={data} 
-        style={{marginTop: 24}}
-        pageSize={2}
-        pagination={paginationProps}
-    />
-)
+class ShowTable extends Component {
+    constructor() {
+        super();
+        this.state = {
+            dataSource: data
+        }
+    }
+
+    render() {
+        return (
+            <Table 
+                columns={columns} 
+                dataSource={this.state.dataSource} 
+                style={{marginTop: 24}}
+                pageSize={2}
+                pagination={paginationProps}
+            />
+        )
+    }
+
+    componentDidMount() {
+        eventBus.addListener('search',(...searchValues)=>{
+            let [name,time] = searchValues;
+            let newData = data.filter(item => {
+                return item.name.includes(name) && (item.time === time)
+            })
+            this.setState({
+                dataSource: newData
+            })
+        })
+    }
+}
 
 export default ShowTable;

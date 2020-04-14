@@ -1,42 +1,45 @@
 import React , {Component} from "react";
 import {Select} from "antd";
+import data from "../../Data";
 
 const {Option} = Select;
 
 function onChange(value) {
-    console.log(`selected ${value}`);
   }
   
   function onBlur() {
-    console.log('blur');
   }
   
   function onFocus() {
-    console.log('focus');
   }
   
   function onSearch(val) {
-    console.log('search:', val);
   }
 
-const SelectInput = () => (
-    <Select
-    showSearch
-    style={{ width: 287,height: 34}}
-    placeholder="请选择"
-    optionFilterProp="children"
-    onChange={onChange}
-    onFocus={onFocus}
-    onBlur={onBlur}
-    onSearch={onSearch}
-    filterOption={(input, option) =>
-      option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+const SelectInput = (props) => {
+    function onChange(value) {
+        props.setSelectValue(value);
     }
-  >
-    <Option value="文件夹1">文件夹1</Option>
-    <Option value="文件夹2">文件夹2</Option>
-    <Option value="文件夹3">文件夹3</Option>
-  </Select>
-)
+    let options = data.map(item => (
+        <Option value={item.name} key={item.key}>{item.name}</Option>
+    ))
+    return (
+        <Select
+            showSearch
+            style={{ width: 287,height: 34}}
+            placeholder="请选择"
+            optionFilterProp="children"
+            onChange={onChange}
+            onFocus={onFocus}
+            onBlur={onBlur}
+            onSearch={onSearch}
+            filterOption={(input, option) =>
+            option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+            }
+        >
+            {options}
+        </Select>
+    )
+}
 
 export default SelectInput;
